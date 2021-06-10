@@ -281,12 +281,32 @@ O par “Volume de chuvas versus produtividade média por hectare de abacate” 
 ## III
 *Uma amostra de tamanho 80 produziu a correlação amostral r = 0,54. Fazer os 4 testes de hipótese, a seguir e responder ao item 5.*
 
+### Teoria
+The correlation coefficient, r, tells us about the strength and direction of the linear relationship between x and y. However, the reliability of the linear model also depends on how many observed data points are in the sample. We need to look at both the value of the correlation coefficient r and the sample size n, together. We perform a hypothesis test of the "significance of the correlation coefficient" to decide whether the linear relationship in the sample data is strong enough to use to model the relationship in the population. 
+
+The sample data are used to compute r, the correlation coefficient for the sample. If we had data
+for the entire population, we could find the population correlation coefficient. But because we have only sample data, we cannot calculate the population correlation coefficient. The sample correlation coefficient, r, is our estimate of the unknown population correlation coefficient.
+
+If the p-value is less than the significance level ($\alpha = 0.05$):
+
+- **Decision**: Reject the null hypothesis.
+
+- **Conclusion**: "There is sufficient evidence to conclude that there is a significant linear relationship between x and y because the correlation coefficient is significantly different from zero."
+
+If the p-value is NOT less than the significance level ($\alpha=0.05$):
+
+- **Decision**: DO NOT REJECT the null hypothesis.
+
+- **Conclusion**: "There is insufficient evidence to conclude that there is a significant linear relationship between x and y because the correlation coefficient is NOT significantly different from zero."
+
+
+### Exercício
 Sabe-se que o teste de hipótese de correlação estatística é feito por
 
 \openup 2ex
 \begin{gather*}
-Z = 1,1513 \times \log \frac{1+r}{1-r}\\
-Z ~ N (\mu_Z,\ Var_Z)\\
+Z = 1,1513 \times \log \left(\frac{1+r}{1-r}\right)\\
+Z \sim N (\mu_Z,\ Var_Z)\\
 \mu_Z = 1,1513 \times \log \left(\frac{1 +\ valor\ em\ H0}{1 -\ valor\ em\ H0}\right)\\
 Var_Z = \frac{1}{n-3}\\
 Z_{obs} = \frac{Z - \mu_Z}{\sigma_Z}
@@ -301,13 +321,29 @@ Na fórmula acima,
 \begin{gather*}
 n = 80\\
 r = 0,54\\
-Z = 1,1513 \times (\log \frac{1+0,54}{1-0,54}) = 0,6041595\\
+Z = 1,1513 \times \log \left(\frac{1+0,54}{1-0,54}\right) = 0,6041595\\
 \mu_Z = 1,1513 \times \left(\frac{1 + 0,41}{1 - 0,41}\right) = 0,435614043\\
 Var_Z = \frac{1}{80 - 3} =  0,01298701\\
 \sigma_Z = \sqrt{Var_Z} = 0,11396058\\
 Z_{obs} = 1,48
 \end{gather*}
 
+
+### Resolvendo no R
+
+```{r teste de hipotese}
+
+Z_obs = function(r, n, h0){
+  
+  Z = 1.1513 * log((1 + r)/(1 - r), base = 10)
+  
+  uz = 1.1513 * log((1 + h0) / (1 - h0), base = 10)
+  
+  sigma_z = sqrt(1 / (n - 3))
+  
+  (Z - uz) / sigma_z
+}
+```
 1\. **H0 : p = 0,41   contra   H1 : p > 0,41, ao nível de 0,10 (unicaudal à direita)**
 
 $Z_{obs}$ = 1,48 
@@ -403,7 +439,7 @@ Sendo  0,000379 < 0,05, temos que H0 é falsa, ou seja, o coeficiente angular é
 \begin{enumerate}[(a)]
   \item A variável tamanho é relevante no modelo de regressão, sendo H0 verdadeira.
   \item \textbf{O coeficiente linear é relevante no modelo de regressão, sendo H0 falsa.}
-  \item O modelo consegue explicar 73% da variância do tamanho das filiais da rede de lojas.
+  \item O modelo consegue explicar 73\% da variância do tamanho das filiais da rede de lojas.
   \item Não valeu a pena incluir a variável vendas no modelo de regressão.
   \item Nenhuma das alternativas anteriores.
 \end{enumerate}
