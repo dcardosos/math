@@ -127,17 +127,22 @@ glue::glue('
 
 ```
 
+### Visualização gráfica
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+```{r visu_ex}
+unique(expand_grid(x2 = x[mask_A1], y2 = mask_B1)) %>%
+  filter(
+    map2_lgl(.x = x2, .y = y2, ~ .y >= .x + 4)) %>%
+  
+  # criando a coluna de coordenadas para plotar no grafico
+  mutate(
+    coordenadas = map2_chr(.x = x2, 
+                           .y = y2, 
+                           .f = ~ glue::glue('({.x}, {.y})'))) %>%
+  
+  # o gráfico fica em formato de triângulo com três pontos
+  ggplot(aes(x = x2, y = y2)) +
+  geom_polygon(fill = 'darkblue') +
+  geom_text(aes(label = coordenadas), vjust = c(1, -0.5, -0.5), hjust = c(0.5, 0.5, -.1), size = 3) +
+  xlim(c(-3, 10)) + ylim(c(-3, 10)) + ggtitle('Conjunto D')
+```
