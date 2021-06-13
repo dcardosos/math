@@ -1,0 +1,143 @@
+---
+title: "Funções"
+author: "Douglas Cardoso"
+date: "6/12/2021"
+header-includes:
+    - \usepackage[shortlabels]{enumitem}
+    - \usepackage[brazilian]{babel} # idioma
+    - \usepackage[utf8]{inputenc}  # acento
+    - \usepackage{amssymb}
+    
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set
+
+library(tidyverse)
+```
+
+## Domínio
+
+### Par ordenado
+
+O primeiro representa a abscissa e o segundo, a ordenada.
+
+$(a, b) = (c, d) \Leftrightarrow a = c$ e $b = d$
+
+## Produto cartesiano
+
+$A \times B = \{(x,y) | x \in A$ e $y \in B\}$
+
+Lê-se a notação $A \times B$ como "A cartesiano B" ou "produto cartesiano de A por B".
+
+Exemplos:
+
+1º) Se A = {1, 2, 3} e B = {1,2} temos,
+
+A $\times$ B = {(1,1), (1,2), (2,1), (2,2), (3,1), (3,2)}
+
+e
+
+B $\times$ A = {(1,1), (1,2), (1,3), (2,1), (2,2), (2,3)}
+
+
+Como fica o plano cartesiano do produto cartesiano de A por B e de B por A?
+```{r}
+
+A = c(1,2,3)
+B = c(1,2)
+
+# expand grid
+cartesian_prod <- unique(expand.grid(x = A, y = B))
+
+# A x B
+ggplot(cartesian_prod, aes(x = x, y = y)) +
+  geom_point() +
+  xlim(c(0, 4)) + ylim(c(0, 4)) + ggtitle('A x B')
+
+# B x A
+ggplot(cartesian_prod, aes(x = y, y = x)) +
+  geom_point() +
+  xlim(c(0, 4)) + ylim(c(0, 4)) + ggtitle('B x A')
+``` 
+
+Exemplo utilizando condicionais:
+
+Se $A = \{x \in \mathbb{R} \mid  1 \leq  x \leq 3\}$ e  $B = {x \in \mathbb{R} \mid 1 \leq x \leq 5}$, então:
+
+$A \times B = \{(x,y) \in \mathbb{R}^2 \mid 1 \leq x \leq 3$ e $1 \leq y \leq 5\}$
+
+e
+
+$B \times A = \{(x,y) \in \mathbb{R}^2 \mid 1 \leq x \leq 5$ e $1 \leq y \leq 3\}$
+
+A representação gráfica fica assim:
+
+```{r}
+x <- seq(0, 10, 1)
+
+mask_A <- map_lgl(x, function(x){ 1 <= x & x <= 3})
+mask_B <- map_lgl(x, function(x){ 1 <= x & x <= 5})
+
+cartesian_prod1 <- unique(expand_grid(x1 = x[mask_A], y1 = x[mask_B]))
+
+# A1 x B1 ----- cria um retângulo
+ggplot(cartesian_prod1, aes(x = x1, y = y1)) +
+  geom_point() +
+  xlim(c(0, 10)) + ylim(c(0, 10)) + ggtitle('A1 x B1')
+
+# A1 x B1 ----- cria um retângulo
+ggplot(cartesian_prod1, aes(x = y1, y = x1)) +
+  geom_point() +
+  xlim(c(0, 10)) + ylim(c(0, 10)) + ggtitle('B1 x A1')
+
+```
+
+### Exercício de produto cartesiano
+Seja $\mathbb{Z}$ o conjunto dos números inteiros. Sejam ainda os conjuntos 
+$A = \{x \in \mathbb{Z} \mid -1 < x \leq 2\}$ e $B = \{3,4,5\}$. 
+Qual o número de elementos do conjunto 
+$D = \{(x, y) \in A \times B \mid y \geq x + 4\}$?
+
+### Resolução 
+
+```{r exercicio}
+x <- seq(-3, 10, 1) # conjunto dos números inteiros
+
+mask_A1 <- map_lgl(x, ~ -1 < .x  & .x <= 2)
+mask_B1 <- c(3, 4, 5)
+
+# produto cartesiano A1 x B1
+
+unique(expand_grid(x2 = x[mask_A1], y2 = mask_B1)) %>%
+
+# conjunto D
+filter(
+    map2_lgl(.x = x2, .y = y2, ~ .y >= .x + 4)) %>%
+
+# número de elementos de D
+summarise(n = n()) %>%
+  dplyr::pull(n) ->
+  n_elem
+
+# mensagem-resposta  -------
+glue::glue('
+           O número de elementos no conjunto D é {n_elem}')
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
